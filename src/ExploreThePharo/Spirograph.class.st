@@ -150,7 +150,7 @@ Spirograph >> start [
 { #category : #stepping }
 Spirograph >> step [
 
-	(cycle ~= 0 and: [penPointStart x =~ penPoint x and: [ penPointStart y =~ penPoint y ]]) ifTrue: [ self stop. ^self ].
+	(cycle ~= 0 and: [penPointStart =~ penPoint]) ifTrue: [ self stop. ^self ].
 	angle := angle + 1.
 	cycle := cycle + 1.
 	self changed.
