@@ -2,23 +2,15 @@ Class {
 	#name : #Spirograph,
 	#superclass : #Morph,
 	#instVars : [
-		'size',
-		'outerRadius',
-		'radius',
-		'penOffset',
 		'penColor',
-		'centerOfBounds',
-		'centerAtStart',
 		'penPointStart',
 		'previousPenPoint',
-		'angle',
-		'center',
-		'penPoint',
 		'form',
 		'formCanvas',
 		'isStopped',
 		'cycle',
-		'showCircles'
+		'showCircles',
+		'roter'
 	],
 	#category : #ExploreThePharo
 }
@@ -50,16 +42,17 @@ Spirograph >> clear [
 { #category : #drawing }
 Spirograph >> drawCirclesOn: aCanvas [
 
-	| rect centerOfTool penPointOfTool |
+	| rect centerOfRoter penPointOfRoter |
 	
+	rect := roter encompassingRectangleForOuterCircle translateBy: self bounds center.
 	aCanvas fillOval: self bounds color: Color transparent borderWidth: 1 borderColor: Color black.
 	
-	centerOfTool := center + self bounds origin.
-	penPointOfTool := penPoint + self bounds origin.
-	rect := (centerOfTool - radius) corner: (centerOfTool + radius).
+	rect := roter encompassingRectangle translateBy: self bounds center.
 	aCanvas fillOval: rect color: Color transparent borderWidth: 1 borderColor: Color black.
 	
-	aCanvas line: centerOfTool to: penPointOfTool color: Color green.
+	centerOfRoter := roter center translateBy: self bounds center.
+	penPointOfRoter := roter penPoint translateBy: self bounds center.
+	aCanvas line: centerOfRoter  to: penPointOfRoter color: Color green.
 
 ]
 
@@ -88,7 +81,11 @@ Spirograph >> initialize [
 	self stopStepping.
 	self showCircles.
 	self size: 600.
-	self radius: 35 penOffset: 10 penColor: Color red.
+	roter := SpirographRoter new.
+	self radius: 35 penOffset: 25 penColor: Color red.
+	penPointStart := roter penPoint.
+	previousPenPoint := penPointStart translateBy: form center.
+
 
 
 ]
@@ -96,11 +93,7 @@ Spirograph >> initialize [
 { #category : #accessing }
 Spirograph >> radius: anInteger1 penOffset: anInteger2 penColor: aColor [
 	
-	radius := anInteger1.
-	penOffset := anInteger2.
-	centerAtStart := centerOfBounds translateBy: (0@(outerRadius - radius) negated ).
-	penPointStart := centerAtStart - (0@(radius - penOffset)).
-	previousPenPoint := penPointStart.
+	roter raius: anInteger1 offset: self extent x / 2 - anInteger1 penOffset: anInteger2 revolutionAngle: 1.
 	penColor := aColor.
 	isStopped := false.
 	self reset.
@@ -111,9 +104,10 @@ Spirograph >> radius: anInteger1 penOffset: anInteger2 penColor: aColor [
 { #category : #initialization }
 Spirograph >> reset [
 	
-	angle := 0.
 	cycle := 0.
-	previousPenPoint := penPointStart.
+	roter reset.
+	penPointStart := roter penPoint.
+	previousPenPoint := penPointStart translateBy: form center.
 	self changed.
 ]
 
@@ -129,10 +123,7 @@ Spirograph >> showCircles [
 { #category : #accessing }
 Spirograph >> size: anInteger [
 	
-	size := anInteger.
-	self extent: size @ size.
-	centerOfBounds := self extent / 2.
-	outerRadius := size / 2.
+	self extent: anInteger @ anInteger.
 	self clear
 
 
@@ -150,9 +141,9 @@ Spirograph >> start [
 { #category : #stepping }
 Spirograph >> step [
 
-	(cycle ~= 0 and: [penPointStart =~ penPoint]) ifTrue: [ self stop. ^self ].
-	angle := angle + 1.
+	(cycle ~= 0 and: [penPointStart =~ roter penPoint]) ifTrue: [ self stop. ^self ].
 	cycle := cycle + 1.
+	roter revolve.
 	self changed.
 ]
 
@@ -174,12 +165,8 @@ Spirograph >> stop [
 { #category : #stepping }
 Spirograph >> updateForm [
 
-	| r |
-	r := (-2 * Float pi) * (angle / 360).
-	center := centerAtStart rotateBy: r about: centerOfBounds.
-	penPoint := center - (0@(radius - penOffset)).
-	r := (r * outerRadius) / radius.
-	penPoint := penPoint rotateBy: r negated about: center.
+	| penPoint |
+	penPoint := roter penPoint translateBy: form center.
 	formCanvas line: previousPenPoint to: penPoint color: penColor.
 	previousPenPoint := penPoint.
 

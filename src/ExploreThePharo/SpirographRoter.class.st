@@ -22,7 +22,7 @@ SpirographRoter >> center [
 { #category : #accessing }
 SpirographRoter >> encompassingRectangle [
 
-	^(center - radius) @ (center + radius)
+	^(center - radius) corner: (center + radius)
 ]
 
 { #category : #accessing }
@@ -31,7 +31,7 @@ SpirographRoter >> encompassingRectangleForOuterCircle [
 	| radiusOfOuterCircle origin |
 	radiusOfOuterCircle := offset + radius.
 	origin := 0@0.
-	^(origin - radiusOfOuterCircle) @ (origin + radiusOfOuterCircle)
+	^(origin - radiusOfOuterCircle) corner: (origin + radiusOfOuterCircle)
 ]
 
 { #category : #accessing }
@@ -47,7 +47,7 @@ SpirographRoter >> raius: aNumber1 offset: aNumber2 penOffset: aNumber3 revoluti
 	offset := aNumber2.
 	penOffset := aNumber3.
 	
-	revolutionAngle := Float pi * aNumber4 / 180.
+	revolutionAngle := Float pi negated * aNumber4 / 180.
 	rotationAngle := revolutionAngle negated * (offset + radius) / radius.
 	
 	self reset
@@ -65,8 +65,8 @@ SpirographRoter >> reset [
 SpirographRoter >> revolve [
 
 	| newCenter |
-	newCenter := center rotateBy: revolutionAngle centerAt: 0@0.
-	penPoint := (penPoint translateBy: (newCenter - center)) rotateBy: rotationAngle centerAt: newCenter.
+	newCenter := center rotateBy: revolutionAngle about: 0@0.
+	penPoint := (penPoint translateBy: (newCenter - center)) rotateBy: rotationAngle about: newCenter.
 	center := newCenter.
 
 ]
