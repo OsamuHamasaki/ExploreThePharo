@@ -8,7 +8,9 @@ Class {
 		'center',
 		'penPoint',
 		'revolutionAngle',
-		'rotationAngle'
+		'rotationAngle',
+		'startPenPoint',
+		'stopBlock'
 	],
 	#category : #ExploreThePharo
 }
@@ -32,6 +34,20 @@ SpirographRoter >> encompassingRectangleForOuterCircle [
 	radiusOfOuterCircle := offset + radius.
 	origin := 0@0.
 	^(origin - radiusOfOuterCircle) corner: (origin + radiusOfOuterCircle)
+]
+
+{ #category : #initialization }
+SpirographRoter >> initialize [
+
+	super initialize.
+	stopBlock := [  ].
+	
+]
+
+{ #category : #'private - testing' }
+SpirographRoter >> isPenOnStartPoint [
+	
+	^penPoint =~ startPenPoint
 ]
 
 { #category : #accessing }
@@ -59,6 +75,7 @@ SpirographRoter >> reset [
 
 	center := 0 @ offset negated.
 	penPoint := 0 @ (offset + penOffset) negated.
+	startPenPoint := penPoint.
 ]
 
 { #category : #moving }
@@ -68,5 +85,12 @@ SpirographRoter >> revolve [
 	newCenter := center rotateBy: revolutionAngle about: 0@0.
 	penPoint := (penPoint translateBy: (newCenter - center)) rotateBy: rotationAngle about: newCenter.
 	center := newCenter.
+	self isPenOnStartPoint ifTrue: [ stopBlock value ].
 
+]
+
+{ #category : #accessing }
+SpirographRoter >> stopBlock: aBlock [
+
+	stopBlock := aBlock.
 ]
