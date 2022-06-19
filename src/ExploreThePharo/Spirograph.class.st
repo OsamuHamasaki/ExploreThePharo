@@ -33,7 +33,8 @@ Class {
 		'showCircles',
 		'roter',
 		'fillColor',
-		'borderColor'
+		'borderColor',
+		'encompassingRectForOuterCircle'
 	],
 	#category : #ExploreThePharo
 }
@@ -65,14 +66,11 @@ Spirograph >> drawCirclesOn: aCanvas [
 
 	| rects centerOfRoter penPointOfRoter center |
 	center := self bounds center.
-	
-	rects := {
-		roter encompassingRectangleForOuterCircle translateBy: center . 
-		roter encompassingRectangle translateBy: center }.
-		
+	rects := { encompassingRectForOuterCircle . roter encompassingRectangle }.
 	rects do: [ :rect |
-		aCanvas fillOval: rect color: fillColor borderWidth: 1 borderColor: borderColor.].
-		
+		aCanvas fillOval: (rect translateBy: center) color: fillColor borderWidth: 1 borderColor: borderColor.
+		 ].
+
 	centerOfRoter := roter center translateBy: center.
 	penPointOfRoter := roter penLocation translateBy: center.
 	aCanvas line: centerOfRoter  to: penPointOfRoter color: Color green.
@@ -131,6 +129,7 @@ Spirograph >> penColor: aColor [
 Spirograph >> radius: anInteger1 offset: anInteger2 penOffset: anInteger3 [
 	
 	roter raius: anInteger1 offset: anInteger2 penOffset: anInteger3 revolutionAngle: 1.
+	encompassingRectForOuterCircle := roter encompassingRectangleForOuterCircle.
 	self reset.
 
 
@@ -164,14 +163,14 @@ Spirograph >> size: anInteger [
 
 ]
 
-{ #category : #stepping }
+{ #category : #'stepping and presenter' }
 Spirograph >> start [
 
 	super start.
 	self changed.
 ]
 
-{ #category : #stepping }
+{ #category : #'stepping and presenter' }
 Spirograph >> step [
 
 	roter revolve.
@@ -186,7 +185,7 @@ Spirograph >> stepTime [
 
 ]
 
-{ #category : #stepping }
+{ #category : #'stepping and presenter' }
 Spirograph >> stop [
 
 	super stop.
