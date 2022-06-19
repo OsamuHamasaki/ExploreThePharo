@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'paper',
 		'showCircles',
-		'roter'
+		'roter',
+		'fillColor',
+		'borderColor'
 	],
 	#category : #ExploreThePharo
 }
@@ -34,17 +36,18 @@ Spirograph >> clear [
 { #category : #drawing }
 Spirograph >> drawCirclesOn: aCanvas [
 
-	| rect centerOfRoter penPointOfRoter center |
+	| rects centerOfRoter penPointOfRoter center |
 	center := self bounds center.
 	
-	rect := roter encompassingRectangleForOuterCircle translateBy: center.
-	aCanvas fillOval: self bounds color: Color transparent borderWidth: 1 borderColor: Color black.
-	
-	rect := roter encompassingRectangle translateBy: center.
-	aCanvas fillOval: rect color: Color transparent borderWidth: 1 borderColor: Color black.
-	
+	rects := {
+		roter encompassingRectangleForOuterCircle translateBy: center . 
+		roter encompassingRectangle translateBy: center }.
+		
+	rects do: [ :rect |
+		aCanvas fillOval: rect color: fillColor borderWidth: 1 borderColor: borderColor.].
+		
 	centerOfRoter := roter center translateBy: center.
-	penPointOfRoter := roter penPoint translateBy: center.
+	penPointOfRoter := roter penLocation translateBy: center.
 	aCanvas line: centerOfRoter  to: penPointOfRoter color: Color green.
 
 ]
@@ -83,15 +86,24 @@ Spirograph >> initialize [
 	roter := SpirographRoter new
 		stopBlock: [ self stop ];
 		yourself.
-	self radius: 35 penOffset: 25 penColor: Color red.
+	self radius: 35 offset: (300 - 35) penOffset: 25.
+	self penColor: Color red.
+	fillColor := Color transparent.
+	borderColor := Color black.
 
 ]
 
 { #category : #accessing }
-Spirograph >> radius: anInteger1 penOffset: anInteger2 penColor: aColor [
+Spirograph >> penColor: aColor [
 	
-	roter raius: anInteger1 offset: self extent x / 2 - anInteger1 penOffset: anInteger2 revolutionAngle: 1.
 	paper penColor: aColor.
+
+]
+
+{ #category : #accessing }
+Spirograph >> radius: anInteger1 offset: anInteger2 penOffset: anInteger3 [
+	
+	roter raius: anInteger1 offset: anInteger2 penOffset: anInteger3 revolutionAngle: 1.
 	self reset.
 
 
@@ -101,7 +113,7 @@ Spirograph >> radius: anInteger1 penOffset: anInteger2 penColor: aColor [
 Spirograph >> reset [
 	
 	roter reset.
-	paper setPenAt: roter penPoint.
+	paper setPenAt: roter penLocation.
 	self changed.
 ]
 
@@ -118,7 +130,7 @@ Spirograph >> showCircles [
 Spirograph >> size: anInteger [
 	
 	self extent: anInteger @ anInteger.
-	paper := SpirographPaper new extent: self extent.
+	paper := SpirographPaper extent: self extent.
 	self clear
 
 
@@ -136,7 +148,7 @@ Spirograph >> start [
 Spirograph >> step [
 
 	roter revolve.
-	paper movePenAt: roter penPoint.
+	paper movePenAt: roter penLocation.
 	self changed.
 ]
 

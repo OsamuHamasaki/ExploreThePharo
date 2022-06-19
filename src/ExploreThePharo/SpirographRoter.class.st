@@ -6,11 +6,11 @@ Class {
 		'offset',
 		'penOffset',
 		'center',
-		'penPoint',
 		'revolutionAngle',
 		'rotationAngle',
-		'startPenPoint',
-		'stopBlock'
+		'stopBlock',
+		'startPenLocation',
+		'penLocation'
 	],
 	#category : #ExploreThePharo
 }
@@ -45,15 +45,15 @@ SpirographRoter >> initialize [
 ]
 
 { #category : #'private - testing' }
-SpirographRoter >> isPenOnStartPoint [
+SpirographRoter >> isPenOnStartLocation [
 	
-	^penPoint =~ startPenPoint
+	^penLocation =~ startPenLocation
 ]
 
 { #category : #accessing }
-SpirographRoter >> penPoint [
+SpirographRoter >> penLocation [
 
-	^penPoint
+	^penLocation
 ]
 
 { #category : #accessing }
@@ -74,8 +74,8 @@ SpirographRoter >> raius: aNumber1 offset: aNumber2 penOffset: aNumber3 revoluti
 SpirographRoter >> reset [
 
 	center := 0 @ offset negated.
-	penPoint := 0 @ (offset + penOffset) negated.
-	startPenPoint := penPoint.
+	penLocation := 0 @ (offset + penOffset) negated.
+	startPenLocation := penLocation.
 ]
 
 { #category : #moving }
@@ -83,9 +83,9 @@ SpirographRoter >> revolve [
 
 	| newCenter |
 	newCenter := center rotateBy: revolutionAngle about: 0@0.
-	penPoint := (penPoint translateBy: (newCenter - center)) rotateBy: rotationAngle about: newCenter.
+	penLocation := (penLocation translateBy: (newCenter - center)) rotateBy: rotationAngle about: newCenter.
 	center := newCenter.
-	self isPenOnStartPoint ifTrue: [ stopBlock value ].
+	self isPenOnStartLocation ifTrue: [ stopBlock value ].
 
 ]
 

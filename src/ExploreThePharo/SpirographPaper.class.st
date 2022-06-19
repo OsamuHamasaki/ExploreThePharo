@@ -6,10 +6,18 @@ Class {
 		'canvas',
 		'penColor',
 		'center',
-		'previousPenPoint'
+		'previousPenLocation'
 	],
 	#category : #ExploreThePharo
 }
+
+{ #category : #geometry }
+SpirographPaper class >> extent: aPoint [
+
+	^ self new
+		extent: aPoint;
+		yourself
+]
 
 { #category : #accessing }
 SpirographPaper >> clear [
@@ -36,10 +44,10 @@ SpirographPaper >> extent: aPoint [
 { #category : #accessing }
 SpirographPaper >> movePenAt: aPoint [
 	
-	| newPenPoint |
-	newPenPoint := aPoint translateBy: center.
-	canvas line: previousPenPoint to: newPenPoint color: penColor.
-	previousPenPoint := newPenPoint.
+	| newPenLocation |
+	newPenLocation := aPoint translateBy: center.
+	canvas line: previousPenLocation to: newPenLocation color: penColor.
+	previousPenLocation := newPenLocation.
 
 ]
 
@@ -52,7 +60,7 @@ SpirographPaper >> penColor: aColor [
 { #category : #accessing }
 SpirographPaper >> setPenAt: aPoint [
 	
-	previousPenPoint := aPoint translateBy: center.
+	previousPenLocation := aPoint translateBy: center.
 ]
 
 { #category : #accessing }
