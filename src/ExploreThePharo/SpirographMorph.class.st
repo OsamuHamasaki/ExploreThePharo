@@ -26,7 +26,7 @@ Internal Representation and Key Implementation Points.
     Implementation Points
 "
 Class {
-	#name : #Spirograph,
+	#name : #SpirographMorph,
 	#superclass : #Morph,
 	#instVars : [
 		'paper',
@@ -40,7 +40,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-Spirograph class >> open [
+SpirographMorph class >> open [
 	"Spirograph open"
 	| aMorph |
 	aMorph := self new
@@ -52,7 +52,7 @@ Spirograph class >> open [
 ]
 
 { #category : #initialization }
-Spirograph >> clear [
+SpirographMorph >> clear [
 	
 	paper clear.
 	self changed
@@ -62,7 +62,7 @@ Spirograph >> clear [
 ]
 
 { #category : #drawing }
-Spirograph >> drawCirclesOn: aCanvas [
+SpirographMorph >> drawCirclesOn: aCanvas [
 
 	| rects centerOfRoter penPointOfRoter center |
 	center := self bounds center.
@@ -78,7 +78,7 @@ Spirograph >> drawCirclesOn: aCanvas [
 ]
 
 { #category : #drawing }
-Spirograph >> drawOn: aCanvas [
+SpirographMorph >> drawOn: aCanvas [
 	
 	self drawPaperOn: aCanvas.
 	showCircles ifTrue: [ self drawCirclesOn: aCanvas ].
@@ -86,14 +86,14 @@ Spirograph >> drawOn: aCanvas [
 ]
 
 { #category : #drawing }
-Spirograph >> drawPaperOn: aCanvas [
+SpirographMorph >> drawPaperOn: aCanvas [
 	
 	paper drawFormOn: aCanvas at: self bounds origin.
 
 ]
 
 { #category : #initialization }
-Spirograph >> hideCircles [
+SpirographMorph >> hideCircles [
 	
 	showCircles := false.
 	self changed.
@@ -102,7 +102,7 @@ Spirograph >> hideCircles [
 ]
 
 { #category : #initialization }
-Spirograph >> initialize [
+SpirographMorph >> initialize [
 	
 	super initialize.
 	self stopStepping.
@@ -119,14 +119,14 @@ Spirograph >> initialize [
 ]
 
 { #category : #accessing }
-Spirograph >> penColor: aColor [
+SpirographMorph >> penColor: aColor [
 	
 	paper penColor: aColor.
 
 ]
 
 { #category : #accessing }
-Spirograph >> radius: anInteger1 offset: anInteger2 penOffset: anInteger3 [
+SpirographMorph >> radius: anInteger1 offset: anInteger2 penOffset: anInteger3 [
 	
 	roter raius: anInteger1 offset: anInteger2 penOffset: anInteger3 revolutionAngle: 1.
 	encompassingRectForOuterCircle := roter encompassingRectangleForOuterCircle.
@@ -136,7 +136,7 @@ Spirograph >> radius: anInteger1 offset: anInteger2 penOffset: anInteger3 [
 ]
 
 { #category : #initialization }
-Spirograph >> reset [
+SpirographMorph >> reset [
 	
 	roter reset.
 	paper setPenAt: roter penLocation.
@@ -144,7 +144,7 @@ Spirograph >> reset [
 ]
 
 { #category : #initialization }
-Spirograph >> showCircles [
+SpirographMorph >> showCircles [
 	
 	showCircles := true.
 	self changed.
@@ -153,7 +153,7 @@ Spirograph >> showCircles [
 ]
 
 { #category : #accessing }
-Spirograph >> size: anInteger [
+SpirographMorph >> size: anInteger [
 	
 	self extent: anInteger @ anInteger.
 	paper := SpirographPaper extent: self extent.
@@ -164,14 +164,14 @@ Spirograph >> size: anInteger [
 ]
 
 { #category : #'stepping and presenter' }
-Spirograph >> start [
+SpirographMorph >> start [
 
 	super start.
 	self changed.
 ]
 
 { #category : #'stepping and presenter' }
-Spirograph >> step [
+SpirographMorph >> step [
 
 	roter revolve.
 	paper movePenAt: roter penLocation.
@@ -179,14 +179,14 @@ Spirograph >> step [
 ]
 
 { #category : #stepping }
-Spirograph >> stepTime [
+SpirographMorph >> stepTime [
 
 	^10
 
 ]
 
 { #category : #'stepping and presenter' }
-Spirograph >> stop [
+SpirographMorph >> stop [
 
 	super stop.
 	self changed.
