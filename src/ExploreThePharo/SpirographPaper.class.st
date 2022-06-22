@@ -53,6 +53,12 @@ SpirographPaper >> clear [
 
 ]
 
+{ #category : #default }
+SpirographPaper >> defaultPenColor [
+
+	^Color red
+]
+
 { #category : #accessing }
 SpirographPaper >> drawFormOn: aCanvas at: aPoint [
 
@@ -66,6 +72,13 @@ SpirographPaper >> extent: aPoint [
 	form := ColorForm extent: aPoint depth: 8.
 	canvas := form getCanvas.
 	center := aPoint / 2.
+]
+
+{ #category : #initialization }
+SpirographPaper >> initialize [
+
+	super initialize.
+	self penColor: self defaultPenColor.
 ]
 
 { #category : #accessing }
@@ -88,12 +101,4 @@ SpirographPaper >> penColor: aColor [
 SpirographPaper >> setPenAt: aPoint [
 	
 	previousPenLocation := aPoint translateBy: center.
-]
-
-{ #category : #accessing }
-SpirographPaper >> size: anInteger [
-
-	form := ColorForm extent: anInteger @ anInteger.
-	canvas := form getCanvas.
-	center := form extent / 2.
 ]

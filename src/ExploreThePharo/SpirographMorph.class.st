@@ -68,12 +68,6 @@ SpirographMorph >> clear [
 ]
 
 { #category : #default }
-SpirographMorph >> defaultPenColor [
-	
-	^Color red
-]
-
-{ #category : #default }
 SpirographMorph >> defaultSize [
 
 	^600
@@ -125,7 +119,6 @@ SpirographMorph >> initialize [
 	super initialize.
 	self showCircles.
 	self size: self defaultSize.
-	self penColor: self defaultPenColor.
 	fillColor := Color transparent.
 	borderColor := Color black.
 	updatingMethods := Dictionary newFrom: { 
