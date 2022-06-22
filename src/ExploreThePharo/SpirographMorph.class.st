@@ -36,7 +36,7 @@ Class {
 		'fillColor',
 		'borderColor',
 		'encompassingRectForOuterCircle',
-		'updateMethodTable'
+		'updatingMethods'
 	],
 	#category : #ExploreThePharo
 }
@@ -128,7 +128,7 @@ SpirographMorph >> initialize [
 	self penColor: self defaultPenColor.
 	fillColor := Color transparent.
 	borderColor := Color black.
-	updateMethodTable := Dictionary newFrom: { 
+	updatingMethods := Dictionary newFrom: { 
 		#location -> [ paper movePenAt: roter penLocation. self changed. ] . 
 		#atStartLocation -> [ self stop ] .
 		#settings -> [ encompassingRectForOuterCircle := roter  encompassingRectangleForOuterCircle. self reset. ] }.
@@ -215,6 +215,6 @@ SpirographMorph >> stop [
 SpirographMorph >> update: aspectSymbol [
 
 	| updateMethod |
-	updateMethod := updateMethodTable at: aspectSymbol ifAbsent: [ [] ].
+	updateMethod := updatingMethods at: aspectSymbol ifAbsent: [ [] ].
 	updateMethod value
 ]
