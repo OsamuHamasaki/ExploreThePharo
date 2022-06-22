@@ -31,7 +31,7 @@ Internal Representation and Key Implementation Points.
 "
 Class {
 	#name : #SpirographRoter,
-	#superclass : #Object,
+	#superclass : #Model,
 	#instVars : [
 		'radius',
 		'offset',
@@ -39,7 +39,6 @@ Class {
 		'center',
 		'revolutionAngle',
 		'rotationAngle',
-		'stopBlock',
 		'startPenLocation',
 		'penLocation'
 	],
@@ -67,14 +66,6 @@ SpirographRoter >> encompassingRectangleForOuterCircle [
 	^(origin - radiusOfOuterCircle) corner: (origin + radiusOfOuterCircle)
 ]
 
-{ #category : #initialization }
-SpirographRoter >> initialize [
-
-	super initialize.
-	stopBlock := [  ].
-	
-]
-
 { #category : #'private - testing' }
 SpirographRoter >> isPenOnStartLocation [
 	
@@ -88,6 +79,20 @@ SpirographRoter >> penLocation [
 ]
 
 { #category : #accessing }
+SpirographRoter >> radius: aNumber1 offset: aNumber2 penOffset: aNumber3 revolutionAngle: aNumber4 [
+
+	radius := aNumber1.
+	offset := aNumber2.
+	penOffset := aNumber3.
+	
+	revolutionAngle := Float pi negated * aNumber4 / 180.
+	rotationAngle := revolutionAngle negated * (offset + radius) / radius.
+	
+	self reset.
+	self changed: #settings
+]
+
+{ #category : #accessing }
 SpirographRoter >> raius: aNumber1 offset: aNumber2 penOffset: aNumber3 revolutionAngle: aNumber4 [
 
 	radius := aNumber1.
@@ -97,8 +102,8 @@ SpirographRoter >> raius: aNumber1 offset: aNumber2 penOffset: aNumber3 revoluti
 	revolutionAngle := Float pi negated * aNumber4 / 180.
 	rotationAngle := revolutionAngle negated * (offset + radius) / radius.
 	
-	self reset
-
+	self reset.
+	self changed: #settings
 ]
 
 { #category : #initialization }
@@ -116,12 +121,7 @@ SpirographRoter >> revolve [
 	newCenter := center rotateBy: revolutionAngle about: 0@0.
 	penLocation := (penLocation translateBy: (newCenter - center)) rotateBy: rotationAngle about: newCenter.
 	center := newCenter.
-	self isPenOnStartLocation ifTrue: [ stopBlock value ].
+	self changed: #location.
+	self isPenOnStartLocation ifTrue: [ self changed: #atStartLocation ].
 
-]
-
-{ #category : #accessing }
-SpirographRoter >> stopBlock: aBlock [
-
-	stopBlock := aBlock.
 ]

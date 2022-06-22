@@ -29,24 +29,30 @@ Class {
 	#name : #SpirographMorph,
 	#superclass : #Morph,
 	#instVars : [
+		'size',
 		'paper',
 		'showCircles',
 		'roter',
 		'fillColor',
 		'borderColor',
-		'encompassingRectForOuterCircle'
+		'encompassingRectForOuterCircle',
+		'updateMethodTable'
 	],
 	#category : #ExploreThePharo
 }
 
 { #category : #'instance creation' }
 SpirographMorph class >> open [
-	"Spirograph open"
-	| aMorph |
+	"SpirographMorph open"
+	| aMorph roter |
+	roter := SpirographRoter new.
 	aMorph := self new
+		roter: roter;
 		openInWindow;
 		stop;
 		yourself.
+	roter radius: 35 offset: (aMorph size / 2 - 35) penOffset: 25 revolutionAngle: 1.
+
 	^aMorph
 	
 ]
@@ -59,6 +65,18 @@ SpirographMorph >> clear [
 
 
 
+]
+
+{ #category : #default }
+SpirographMorph >> defaultPenColor [
+	
+	^Color red
+]
+
+{ #category : #default }
+SpirographMorph >> defaultSize [
+
+	^600
 ]
 
 { #category : #drawing }
@@ -105,17 +123,15 @@ SpirographMorph >> hideCircles [
 SpirographMorph >> initialize [
 	
 	super initialize.
-	self stopStepping.
 	self showCircles.
-	self size: 600.
-	roter := SpirographRoter new
-		stopBlock: [ self stop ];
-		yourself.
-	self radius: 35 offset: (300 - 35) penOffset: 25.
-	self penColor: Color red.
+	self size: self defaultSize.
+	self penColor: self defaultPenColor.
 	fillColor := Color transparent.
 	borderColor := Color black.
-
+	updateMethodTable := Dictionary newFrom: { 
+		#location -> [ paper movePenAt: roter penLocation. self changed. ] . 
+		#atStartLocation -> [ self stop ] .
+		#settings -> [ encompassingRectForOuterCircle := roter  encompassingRectangleForOuterCircle. self reset. ] }.
 ]
 
 { #category : #accessing }
@@ -125,22 +141,19 @@ SpirographMorph >> penColor: aColor [
 
 ]
 
-{ #category : #accessing }
-SpirographMorph >> radius: anInteger1 offset: anInteger2 penOffset: anInteger3 [
-	
-	roter raius: anInteger1 offset: anInteger2 penOffset: anInteger3 revolutionAngle: 1.
-	encompassingRectForOuterCircle := roter encompassingRectangleForOuterCircle.
-	self reset.
-
-
-]
-
 { #category : #initialization }
 SpirographMorph >> reset [
 	
 	roter reset.
 	paper setPenAt: roter penLocation.
 	self changed.
+]
+
+{ #category : #accessing }
+SpirographMorph >> roter: aSpirographRoter [
+
+	roter := aSpirographRoter.
+	roter addDependent: self.
 ]
 
 { #category : #initialization }
@@ -153,8 +166,15 @@ SpirographMorph >> showCircles [
 ]
 
 { #category : #accessing }
+SpirographMorph >> size [
+	
+	^size
+]
+
+{ #category : #accessing }
 SpirographMorph >> size: anInteger [
 	
+	size := anInteger.
 	self extent: anInteger @ anInteger.
 	paper := SpirographPaper extent: self extent.
 	self clear
@@ -174,8 +194,7 @@ SpirographMorph >> start [
 SpirographMorph >> step [
 
 	roter revolve.
-	paper movePenAt: roter penLocation.
-	self changed.
+
 ]
 
 { #category : #stepping }
@@ -190,4 +209,12 @@ SpirographMorph >> stop [
 
 	super stop.
 	self changed.
+]
+
+{ #category : #updating }
+SpirographMorph >> update: aspectSymbol [
+
+	| updateMethod |
+	updateMethod := updateMethodTable at: aspectSymbol ifAbsent: [ [] ].
+	updateMethod value
 ]
